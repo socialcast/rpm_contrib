@@ -10,7 +10,7 @@ module Resque
       
       def around_perform_with_monitoring(*args)
         begin
-          trace_options = if (defined?(::Backgrounded::Handler::ResqueHandler) && payload_class == ::Backgrounded::Handler::ResqueHandler)
+          trace_options = if (defined?(::Backgrounded::Handler::ResqueHandler) && self.class == ::Backgrounded::Handler::ResqueHandler)
             {
               :class_name => args[0],
               :name => args[2].to_s,
