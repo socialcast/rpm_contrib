@@ -7,13 +7,15 @@ To use the rpm_contrib gem, install the `rpm_contrib` gem from rubygems.org.
 It will also install the required version of the `newrelic_rpm` gem if it's not
 already installed.
 
-For Rails 3.0 and later, add this dependency to your Gemfile:
+For Rails 3.0 and when using Bundler, add these dependencies to your Gemfile:
 
     gem 'rpm_contrib'
+    gem 'newrelic_rpm'
 
-For Rails 2.1 and later, add this dependency to your in your environment.rb:
+For Rails 2.1 and later, add these dependencies to your in your environment.rb:
 
     config.gem 'rpm_contrib'
+    config.gem 'newrelic_rpm'
 
 For other frameworks, make sure you load rubygems if it isn't already, then just
 require the rpm_contrib gem:
@@ -22,31 +24,99 @@ require the rpm_contrib gem:
     require 'rpm_contrib'
 
 When you load the rpm_contrib gem, the `newrelic_rpm` gem will also be
-initialized.  No need for a separate require statement for `newrelic_rpm`.  The
-`rpm_contrib` gem must be loaded before the `newrelic_rpm` gem initializes.
+initialized.  No need for a separate require statement for `newrelic_rpm`. 
 
-# Supported Frameworks
+In non-Rails frameworks, it's important that the New Relic Agent gets
+loaded as late as possible, or that the final initialization hook is called 
+after all other frameworks have loaded:
+
+    DependencyDetection.detect!
+
+### Troubleshooting Startup
+
+If you've set up your gems to load as described above and you are still not seeing 
+data in RPM, there may be a bug in detecting your framework.  Try setting the 
+environment variable `NEWRELIC_DISPATCHER` to the name of your app server (Camping, 
+Resque, Rake, etc), and please report to us if this fixes the problem so we can
+fix the auto-detection logic.
+
+If this does not help then set the `log_level` to `debug` in the `newrelic.yml` file
+and examine the `newrelic_agent.log` file for errors after restarting your app.
+
+## Supported Frameworks
 
 A number of frameworks are supported in the contrib gem.  They are all turned on
 by default but you can add settings to your newrelic.yml to disable any of them.
 
+### ActiveMessaging
+
+The gem will detect the underlying ActiveMessaging::Processor class and instrument the `on_message` method
+
+It can be disabled with the `disable_active_messaging` flag in your newrelic.yml file.
+
+### Cassandra
+
+The gem will instrument Cassandra so it should be visible in transaction traces and the web transactions page.
+
+You can disable it with `disable_cassandra_instrumentation` in your newrelic.yml file.
+
 ### Camping
 
 The gem will detect a Camping app but you need to manually add the
-instrumentation to your configuration file.  See RPMContrib::Instrumentation::Camping 
-for more information.
+instrumentation to your configuration file.  See
+RPMContrib::Instrumentation::Camping for more information. 
+
+In addition you will need to load the gems in the following order: 1) Camping, 2) rpm_contrib,
+3) newrelic_rpm.
+
+### Crack
+
+The gem will instrument the Crack parsers for JSON and XML - you
+should see them in transaction traces and the web transactions page.
+
+You can disable it with `disable_crack` in your newrelic.yml file.
+
+### Curb
+
+The gem will instrument both Curl::Easy and Curl::Multi - they should show up similarly to Net::HTTP in the UI
+
+You can disable it with `disable_curb` in your newrelic.yml file.
+
+## Elastic Search
+
+The gem will instrument ElasticSearch::Client. The metrics should show up in the UI
+
+You can disable it with `disable_elastic_search_instrumentation` in your newrelic.yml file.
+
+## KyotoTycoon
+
+The gem will instrument KyotoTycoon.
+
+You can disable it with `disable_kyototycoon` in your newrelic.yml file.
 
 ### Paperclip
 
-No special configuration required for Paperclip visibility.  You can disable
-it by setting `disable_paperclip` to true in the newrelic.yml file.
+No special configuration required for Paperclip visibility.  
+
+You can disable it by setting `disable_paperclip` to true in your newrelic.yml file.
+
+### Picky
+
+The gem will instrument the [Picky semantic search engine](http://florianhanke.com/picky/) so it should be visible in transaction traces and the web transactions page.
+
+You can disable it with `disable_picky` in your newrelic.yml file.
 
 ### MongoDB
 
-Both MongoMapper and Mongoid are supported.  You can disable them both by setting
-'disable_mongodb' to true in the newrelic.yml file.
+Our instrumentation works on the underlying 'Mongo' library.  
+
+You can disable it by setting 'disable_mongodb' to true in your newrelic.yml file.
 
 ### Resque
+
+To instrument jobs you no longer need to have your Job class inherit from Resque::Job or include 
+the Resque::Plugins::NewRelicInstrumentation module.  The module definition was left in for 
+backward compatibility.
 
 To disable resque, set 'disable_resque' to true in your newrelic.yml file.
 
@@ -54,8 +124,60 @@ To disable resque, set 'disable_resque' to true in your newrelic.yml file.
 
 Redis instrumentation will record operations as well as `allWeb` and `allOther`
 summary metrics under the `Database/Redis` metric namespace. This instrumentation
-supports Redis versions 1.x and 2.x. To disable Redis instrumentation, set
-'disable_redis' to true in your newrelic.yml file.
+supports Redis versions 1.x and 2.x. 
+
+To disable Redis instrumentation, set 'disable_redis' to true in your newrelic.yml file.
+
+### Riak
+
+RiakClient is instrumented.  Its opereations are recorded under Database in the
+the response time graph.
+
+To disable Riak instrumentation, set 'disable_riak_client' to true in your newrelic.yml file.
+
+### Ripple
+
+Ripple is instrumented.  Its opereations are recorded under Database in the
+the response time graph.
+
+To disable Riak instrumentation, set 'disable_ripple' to true in your newrelic.yml file.
+
+### Sinatra view instrumentation
+
+This adds instrumentation to the `render` methods in Sinatra::Base
+
+You can disable it with `disable_sinatra_template` in your newrelic.yml file.
+
+### ThinkingSphinx instrumentation
+
+This adds instrumentation to the `initialize` and `results` method of ThinkingSphinx::Search
+
+You can disable it with `disable_thinking_sphinx` in your newrelic.yml file.
+
+
+### Typhoeus instrumentation
+
+This adds instrumentation to the Typhoeus::Request class for 'GET' requests
+
+You can disable it with `disable_typhoeus` in your newrelic.yml file.
+
+### Ultrasphinx instrumentation
+
+This adds basic instrumentation to the `run` and `results` method of Ultrasphinx::Search
+
+You can disable it with `disable_ultrasphinx` in your newrelic.yml file.
+
+### Workling
+
+This adds instrumentation to the Workling::Base and all children, for all defined public methods not inherited from the Workling::Base class
+
+You can disable it with `disable_workling` in your newrelic.yml file.
+
+### YAJL
+
+This adds instrumentation to the YAJL json parser
+
+You can disable it with `disable_yajl_instrumentation` in your newrelic.yml file.
 
 ### AWS/S3
 
@@ -150,7 +272,8 @@ we'll be happy to help you work through it.
   files will be loaded when the RPM agent is initialized.
 * Add samplers to `lib/rpm_contrib/samplers`.  These classes are
   installed automatically when the RPM agent is initialized.
-* Add tests.  
+* Add tests.
+* Update README.md
 * Commit, do not mess with the Rakefile, version, or history.  (if you
   want to have your own version, that is fine but bump version in a
   commit by itself I can ignore when I pull)

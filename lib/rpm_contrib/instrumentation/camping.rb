@@ -1,5 +1,3 @@
-require 'new_relic/agent/instrumentation/controller_instrumentation'
-
 module RPMContrib
   module Instrumentation
     # == Instrumentation for Camping
@@ -20,34 +18,33 @@ module RPMContrib
     # Camping code example:
     # -------------------------------------------------------------------------------------
     #
-    #	require "newrelic_rpm"
+    #	require "rpm_contrib"
     #
     #	Camping.goes :NewRelicCampingTest
     #
     #	module NewRelicCampingTest
     #	  # your code
     #
-    #	  include NewRelic::Agent::Instrumentation::Camping
+    #	  include RPMContrib::Instrumentation::Camping
     #
     #	end
     #
     #
-    
     module Camping
-      
+
       def self.included(mod)
-        
+        require 'new_relic/agent/instrumentation/controller_instrumentation'
         # Since the Camping::Base module is essentially copied
-        # into the main module (the mod passed in) of a Camping app 
+        # into the main module (the mod passed in) of a Camping app
         # using the Camping.goes :NewRelicCampingTest syntax
         # we need to evaluate "weld" the NewRelic plugin in the context of the new Base
-        
+
         (Kernel.const_get(mod.name)::Base).module_eval do
           include NewRelic::Agent::Instrumentation::ControllerInstrumentation
           add_transaction_tracer :service
         end
       end
-      
+
     end	#RPMContrib::Instrumentation::Camping
   end
 end
