@@ -28,7 +28,7 @@ module Resque
             yield(*args)
           end
         ensure
-          NewRelic::Agent.shutdown if RPMContrib::LanguageSupport.can_fork?
+          NewRelic::Agent.shutdown(:force_send => true) if RPMContrib::LanguageSupport.can_fork?
         end
       end
     end

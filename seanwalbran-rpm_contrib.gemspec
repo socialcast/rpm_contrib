@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "seanwalbran-rpm_contrib"
-  s.version = "2.1.6.3"
+  s.version = "2.1.6.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Kayser", "Jon Guymon"]
-  s.date = "2012-02-18"
+  s.date = "2012-02-19"
   s.description = "Community contributed instrumentation for various frameworks based on\nthe New Relic Ruby monitoring gem newrelic_rpm.\n"
   s.email = "support@newrelic.com"
   s.extra_rdoc_files = [
