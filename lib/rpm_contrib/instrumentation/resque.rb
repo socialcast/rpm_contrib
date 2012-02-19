@@ -28,7 +28,8 @@ module Resque
             yield(*args)
           end
         ensure
-          NewRelic::Agent.shutdown(:force_send => true) if RPMContrib::LanguageSupport.can_fork?
+          worker_loop = NewRelic::Agent.agent.instance_variable_get(:@worker_loop)
+          worker_loop.run_task if worker_loop
         end
       end
     end

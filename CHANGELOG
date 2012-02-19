@@ -1,3 +1,6 @@
+* Version 2.1.6.5
+  - Data still not showing up, try alternate method not involving agent shutdown
+
 * Version 2.1.6.4
   - Force data send in agent shutdown call on resque task completion, to fix lost data
 
