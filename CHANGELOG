@@ -1,3 +1,8 @@
+* Version 2.1.6.8
+  - In resque, only send data from the parent process worker loop, because child processes were
+    always sending data, because NewRelic agent never calls update_last_sent.  Just
+    save the data in child resque processes.
+
 * Version 2.1.6.7
   - Try starting worker loop in parent process, not child process.
 

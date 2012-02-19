@@ -28,8 +28,7 @@ module Resque
             yield(*args)
           end
         ensure
-          worker_loop = NewRelic::Agent.agent.started? ? NewRelic::Agent.agent.instance_variable_get(:@worker_loop) : nil
-          worker_loop.run_task if worker_loop
+          NewRelic::Agent.save_data if NewRelic::Agent.agent.started?
         end
       end
     end
@@ -78,8 +77,5 @@ DependencyDetection.defer do
       NewRelic::Agent.after_fork(:force_reconnect => true)
     end
 
-#    ::Resque.after_fork do
-#      NewRelic::Agent.after_fork(:force_reconnect => false)
-#    end
   end
 end 
