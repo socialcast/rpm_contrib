@@ -28,7 +28,7 @@ module Resque
             yield(*args)
           end
         ensure
-          worker_loop = NewRelic::Agent.agent.instance_variable_get(:@worker_loop)
+          worker_loop = NewRelic::Agent.agent.started? ? NewRelic::Agent.agent.instance_variable_get(:@worker_loop) : nil
           worker_loop.run_task if worker_loop
         end
       end
@@ -75,10 +75,11 @@ DependencyDetection.defer do
     ::Resque.before_first_fork do
       NewRelic::Agent.manual_start(:dispatcher => :resque,
                                    :sync_startup => true)
+      NewRelic::Agent.after_fork(:force_reconnect => true)
     end
 
-    ::Resque.after_fork do
-      NewRelic::Agent.after_fork(:force_reconnect => false)
-    end
+#    ::Resque.after_fork do
+#      NewRelic::Agent.after_fork(:force_reconnect => false)
+#    end
   end
 end 
