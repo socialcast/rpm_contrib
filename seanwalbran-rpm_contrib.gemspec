@@ -4,14 +4,16 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "rpm_contrib"
-  s.version = "2.1.6"
+  s.name = %q{seanwalbran-rpm_contrib}
+  s.version = "2.1.6.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Bill Kayser", "Jon Guymon"]
-  s.date = "2011-11-08"
-  s.description = "Community contributed instrumentation for various frameworks based on\nthe New Relic Ruby monitoring gem newrelic_rpm.\n"
-  s.email = "support@newrelic.com"
+  s.authors = [%q{Bill Kayser}, %q{Jon Guymon}]
+  s.date = %q{2012-02-21}
+  s.description = %q{Community contributed instrumentation for various frameworks based on
+the New Relic Ruby monitoring gem newrelic_rpm.
+}
+  s.email = %q{support@newrelic.com}
   s.extra_rdoc_files = [
     "CHANGELOG",
     "LICENSE",
@@ -55,15 +57,16 @@ Gem::Specification.new do |s|
     "test/helper.rb",
     "test/schema.rb",
     "test/test_curb.rb",
+    "test/test_picky.rb",
     "test/test_redis.rb",
     "test/test_resque.rb",
     "test/test_workling.rb"
   ]
-  s.homepage = "http://github.com/newrelic/rpm_contrib"
-  s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Contributed Instrumentation for New Relic RPM", "-m", "README.md"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
-  s.summary = "Contributed Instrumentation for New Relic RPM"
+  s.homepage = %q{http://github.com/newrelic/rpm_contrib}
+  s.rdoc_options = [%q{--line-numbers}, %q{--inline-source}, %q{--title}, %q{Contributed Instrumentation for New Relic RPM}, %q{-m}, %q{README.md}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
+  s.summary = %q{Contributed Instrumentation for New Relic RPM}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
