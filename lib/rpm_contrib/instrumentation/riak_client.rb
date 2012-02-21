@@ -26,23 +26,30 @@ DependencyDetection.defer do
       add_method_tracer :delete_object, 'Database/Riak/delete_object'
     end
 
-    ::Riak::Client::BeefcakeProtobuffsBackend.class_eval &backend_tracers
-    ::Riak::Client::BeefcakeProtobuffsBackend.class_eval do
-      add_method_tracer :server_info, 'Database/Riak/server_info'
-      add_method_tracer :get_client_id, 'Database/Riak/get_client_id'
-      add_method_tracer :set_client_id, 'Database/Riak/set_client_id'
-    end
-    ::Riak::Client::HTTPBackend.class_eval &backend_tracers
-    ::Riak::Client::HTTPBackend.class_eval do
-      add_method_tracer :stats, 'Database/Riak/stats'
-      add_method_tracer :link_walk, 'Database/Riak/link_walk'
-      add_method_tracer :get_index, 'Database/Riak/get_index'
-      add_method_tracer :search, 'Database/Riak/search'
-      add_method_tracer :update_search_index, 'Database/Riak/update_search_index'
+    if defined?(::Riak::Client::BeefcakeProtobuffsBackend)
+      ::Riak::Client::BeefcakeProtobuffsBackend.class_eval &backend_tracers
+      ::Riak::Client::BeefcakeProtobuffsBackend.class_eval do
+        add_method_tracer :server_info, 'Database/Riak/server_info'
+        add_method_tracer :get_client_id, 'Database/Riak/get_client_id'
+        add_method_tracer :set_client_id, 'Database/Riak/set_client_id'
+      end
     end
 
-    ::Riak::RObject.class_eval do
-      add_method_tracer :serialize, 'Database/Riak/serialize'
+    if defined?(::Riak::HTTPBackend)
+      ::Riak::Client::HTTPBackend.class_eval &backend_tracers
+      ::Riak::Client::HTTPBackend.class_eval do
+        add_method_tracer :stats, 'Database/Riak/stats'
+        add_method_tracer :link_walk, 'Database/Riak/link_walk'
+        add_method_tracer :get_index, 'Database/Riak/get_index'
+        add_method_tracer :search, 'Database/Riak/search'
+        add_method_tracer :update_search_index, 'Database/Riak/update_search_index'
+      end
+    end
+
+    if defined?(::Riak::RObject)
+      ::Riak::RObject.class_eval do
+        add_method_tracer :serialize, 'Database/Riak/serialize'
+      end
     end
   end
 end

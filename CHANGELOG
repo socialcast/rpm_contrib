@@ -1,3 +1,6 @@
+* Version 2.1.6.9
+  - In Riak, only try to instrument things if we know they're defined
+
 * Version 2.1.6.8
   - In resque, only send data from the parent process worker loop, because child processes were
     always sending data, because NewRelic agent never calls update_last_sent.  Just
